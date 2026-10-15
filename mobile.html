@@ -214,13 +214,12 @@ body {
     font-weight: bold; opacity: 0.7;
 }
 
-/* ==================== БЛОК УПРАВЛЕНИЯ ==================== */
 .controls-block {
     display: flex; align-items: flex-end; justify-content: center;
     width: 100%;
     gap: 2vmin;
     position: relative;
-    margin: 0;
+    margin: 0vmin 0vmin 0vmin 11vmin;
 }
 
 .chibi-wrap {
@@ -229,6 +228,7 @@ body {
     justify-content: center;
     flex-shrink: 0;
     position: relative;
+    margin: 0vmin 0vmin 0vmin 0vmin;
 }
 .chibi {
     display: block;
@@ -263,16 +263,16 @@ body {
     100% { filter: brightness(1) drop-shadow(0 0 15px rgba(200,200,210,0.3)); transform: scaleY(1); opacity: 1; }
 }
 
-/* Стартовое положение чибиков — внутри своих .chibi-wrap */
+/* Чибик d1 — стартовая позиция из твоих настроек */
 #chibi-d1 {
     width: 17vmin;
-    left: 0;
-    top: 0;
+    left: 86vmin;
+    top: 27.1vmin;
 }
 #chibi-d {
     width: 25vmin;
-    left: 0;
-    top: 0;
+    left: -31.6vmin;
+    top: 29.8vmin;
 }
 
 .controls {
@@ -350,11 +350,8 @@ body {
 .modal-btn.confirm { background: linear-gradient(180deg, #9575cd 0%, #7e57c2 100%); color: #fff; border-color: #7e57c2; box-shadow: 0 0.6vmin 0 #5e35b1; }
 .modal-btn.cancel { background: linear-gradient(180deg, #fff 0%, #ede7f6 100%); color: #5e35b1; }
 
-/* ==================== МОБИЛЬНЫЙ РЕЖИМ ==================== */
 @media (max-width: 600px) {
-    /* Опускаем всю нижнюю часть ближе к фиолетовой полосе */
-    .content { padding: 9vmin 1vmin 20vmin; }
-
+    .content { padding: 9vmin 1vmin 13vmin; }
     .music-toggle {
         top: max(8px, calc(env(safe-area-inset-top) + 6px));
         right: 8px; min-height: 26px; padding: 0 9px; font-size: 8px;
@@ -364,10 +361,6 @@ body {
     .modal-title { font-size: 4vmin; }
     .modal-input { font-size: 4vmin; padding: 2vmin; }
     .modal-btn { font-size: 3.5vmin; padding: 1.5vmin 3vmin; }
-
-    /* Чибики чуть крупнее на телефоне */
-    #chibi-d1 { width: 20vmin; }
-    #chibi-d  { width: 28vmin; }
 }
 </style>
 </head>
@@ -702,19 +695,19 @@ document.addEventListener('touchend',   e => {
 });
 
 /* ============================================================
-   ЧИБИК d1 — ТЕЛЕПОРТ
-   Координаты — смещения от домашней позиции внутри .chibi-wrap
-   (left: +вправо, top: −вверх)
+   ЧИБИК d1 — ТЕЛЕПОРТ ПО ТОЧКАМ
    ============================================================ */
 
 const chibiD1 = document.getElementById('chibi-d1');
 
-const D1_HOME = { left: 0, top: 0 };
+/* Стартовая позиция d1 (home) — из настроек */
+const D1_HOME = { left: 86, top: 27.1 };
 
+/* Точки телепорта d1 — из настроек */
 const D1_POINTS = [
-    { left: -55, top: 0 },       /* прыжок влево */
-    { left: -30, top: -95 },     /* прыжок вверх-влево */
-    { left: 0,   top: 0 }        /* домой */
+    { left: 28.8, top: 27.1 },
+    { left: 26.7, top: -88.4 },
+    { left: 86, top: 27.1 }
 ];
 
 let currentPointIndex = -1;
@@ -745,6 +738,7 @@ chibiD1.addEventListener('click', (e) => {
     playJumpSound();
     chibiD1.classList.add('teleporting');
 
+    // Выбираем случайную точку, кроме текущей
     let newIndex;
     do {
         newIndex = Math.floor(Math.random() * D1_POINTS.length);
@@ -753,6 +747,7 @@ chibiD1.addEventListener('click', (e) => {
     currentPointIndex = newIndex;
     const p = D1_POINTS[newIndex];
 
+    // Меняем позицию через половину анимации
     setTimeout(() => {
         applyD1Position(p.left, p.top);
     }, 250);
@@ -762,6 +757,7 @@ chibiD1.addEventListener('click', (e) => {
         isTeleporting = false;
     }, 500);
 
+    // Через 5 сек возврат домой
     if (returnTimer) clearTimeout(returnTimer);
     returnTimer = setTimeout(() => {
         chibiD1.classList.add('teleporting');
